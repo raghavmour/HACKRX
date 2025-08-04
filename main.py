@@ -21,7 +21,7 @@ from langchain.retrievers.ensemble import EnsembleRetriever
 from langchain_groq import ChatGroq
 
 llm = ChatGroq(
-    api_key=GROK_API_KEY,
+    api_key=os.getenv("GROK_API_KEY"),
     model="meta-llama/llama-4-maverick-17b-128e-instruct",
     temperature=0,
 )
@@ -29,7 +29,7 @@ llm = ChatGroq(
 
 embedding = CohereEmbeddings(
     model="embed-english-v3.0",
-    cohere_api_key=COHERE_API_KEY,
+    cohere_api_key=os.getenv("COHERE_API_KEY"),
     user_agent="langchain",
 )
 
