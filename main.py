@@ -182,7 +182,7 @@ async def handle_hackrx_request(
     return answers
 
 
-# To run this application:
+# To run this application:hello
 # 1. Make sure you have fastapi and uvicorn installed:
 #    pip install fastapi "uvicorn[standard]"
 # 2. Save this code as a file (e.g., main.py).
