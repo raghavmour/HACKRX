@@ -26,8 +26,8 @@ llm = ChatGroq(
 
 
 embedding = CohereEmbeddings(
-    model=COHERE_API_KEY,
-    cohere_api_key="M1LoLhUQW6BAgubqDGemsRI6pUR7nCvryST3buED",
+    model="embed-english-v3.0",
+    cohere_api_key=COHERE_API_KEY,
     user_agent="langchain",
 )
 
