@@ -121,7 +121,7 @@ async def get_api_key(authorization: Annotated[str | None, Header()] = None):
 # --- API Endpoint ---
 
 
-@app.post("/hackrx/run", summary="Process a document and questions")
+@app.post("/api/v1/hackrx/run", summary="Process a document and questions")
 async def handle_hackrx_request(
     request_data: HackRxRequest,
     # The Security function injects the dependency and handles errors.
