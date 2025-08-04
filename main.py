@@ -13,7 +13,9 @@ from langchain_community.document_loaders import (
     UnstructuredEmailLoader,
 )
 from dotenv import load_dotenv
-load_dotenv() 
+import asyncio
+
+load_dotenv()
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.retrievers import BM25Retriever
 from langchain_community.vectorstores import FAISS
@@ -78,6 +80,21 @@ def build_retriever_from_url(url):
     )
 
     return ensemble_retriever, temp_path
+
+
+async def process_single_query(ensemble_retriever, llm, query: str) -> str:
+    """
+    Asynchronously retrieves documents and generates an answer for a single query.
+    """
+    # Use the asynchronous 'ainvoke' method for non-blocking calls
+    docs = await ensemble_retriever.ainvoke(query)
+    relevant_docs = "\n".join([doc.page_content for doc in docs])
+
+    prompt = f"Answer the following question in 1 line and concisely based on the provided documents:\n\nQuestion: {query}\n\nDocuments:\n{relevant_docs}\n\nAnswer:"
+
+    # Use the asynchronous 'ainvoke' for the language model call
+    answer = await llm.ainvoke(prompt)
+    return answer.content
 
 
 # --- Configuration ---
@@ -149,21 +166,19 @@ async def handle_hackrx_request(
 
     queries = request_data.questions
 
-    answers = []
+    tasks = [process_single_query(ensemble_retriever, llm, query) for query in queries]
 
-    for query in queries:
-        docs = ensemble_retriever.invoke(query)
-        relevant_docs = "\n".join([doc.page_content for doc in docs])
+    # --- NEW: Execute all tasks concurrently ---
+    # asyncio.gather runs all the tasks at the same time and waits for all of them to complete.
+    # The '*' unpacks the list of tasks into arguments for gather.
+    print("--- Sending all questions to LLM in parallel ---")
+    answers = await asyncio.gather(*tasks)
 
-        prompt = f"Answer the following question in 1 line and concise based on the provided documents:\n\nQuestion: {query}\n\nDocuments:\n{relevant_docs}\n\nAnswer:"
-        answer = llm.invoke(prompt)
-        answers.append(answer.content)
-
-    # For now, just return a success message with the received data.
+    # Cleanup the temporary file
     if os.path.exists(temp_file_path):
         os.remove(temp_file_path)
 
-    print("--- Sending Answers ---")
+    print("--- All answers received, sending response ---")
     return answers
 
 
