@@ -12,6 +12,8 @@ from langchain_community.document_loaders import (
     UnstructuredWordDocumentLoader,
     UnstructuredEmailLoader,
 )
+from dotenv import load_dotenv
+load_dotenv() 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.retrievers import BM25Retriever
 from langchain_community.vectorstores import FAISS
