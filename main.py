@@ -158,8 +158,9 @@ async def handle_hackrx_request(
     4. Return the answers in the response.
     """
     # print("--- Request Received ---")
-    # print(f"Document URL: {request_data.documents}")
-    # print(f"Number of Questions: {len(request_data.questions)}")
+    print(f"Document URL: {request_data.documents}")
+    print(f"Number of Questions: {len(request_data.questions)}")
+    print(request_data.questions);
     document_url = request_data.documents
 
     ensemble_retriever, temp_file_path = build_retriever_from_url(document_url)
